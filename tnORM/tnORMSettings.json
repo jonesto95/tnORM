@@ -1,0 +1,10 @@
+{
+  "ConnectionString": "Server=localhost;Trusted_Connection=True;",
+  "CodeOutputDirectory": "./Output",
+  "ScriptSourceDirectory": "./DatabaseScripts",
+  "SchemaQueryFilePath": "./SchemaQuery.txt",
+  "DefaultValueMappings": {
+    "(getutcdate())": "DateTime.UtcNow"
+  },
+  "DllCopyDirectories": [ "./CopyDll" ]
+}

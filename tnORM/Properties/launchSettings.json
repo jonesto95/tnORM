@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "tnORM": {
+      "commandName": "Project",
+      "commandLineArgs": "database:tnORM schema:dbo"
+    }
+  }
+}
