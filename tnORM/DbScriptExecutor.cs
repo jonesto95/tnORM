@@ -6,8 +6,9 @@ namespace tnORM
 {
     public static class DbScriptExecutor
     {
-        private const string GuidMonikerPrefix = "GUID";        
+        private const string GuidMonikerPrefix = "GUID";
         private static string UpgradeTableName { get; set; } = tnORMShared.UpgradeTableName;
+        private static string UpgradeErrorTableName { get; set; } = tnORMShared.UpgradeErrorTableName;
         private static string Database { get; set; }
         private static string UpgradeScriptDirectory { get; set; }
         private static List<string> SqlScripts { get; set; } = new();
@@ -47,13 +48,14 @@ namespace tnORM
         {
             string query =
                 $"SELECT COUNT(*) FROM {Database}.sys.tables " +
-                $"WHERE [name] IN ('{UpgradeTableName}', '{UpgradeTableName}Error')";
+                $"WHERE [name] IN ('{UpgradeTableName}', '{UpgradeErrorTableName}')";
             var result = QueryHandler.GetQueryResults(query);
             if((int)result.Rows[0].ItemArray[0] != 2)
             {
                 ConsoleLogger.LogLine("Building missing database tables");
                 query =
                     $"USE {Database} " +
+                    // Build Upgrade Table
                     $"IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE [name] = '{UpgradeTableName}') " +
                     "BEGIN " +
                     $"CREATE TABLE {UpgradeTableName} ( " +
@@ -63,13 +65,14 @@ namespace tnORM
                     "IsSuccessful BIT NOT NULL DEFAULT 0, " +
                     $"PRIMARY KEY ({UpgradeTableName}Id) " +
                     ") END " +
-                    $"IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE [name] = '{UpgradeTableName}Error') " +
+                    // Build Upgrade Error Table
+                    $"IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE [name] = '{UpgradeErrorTableName}') " +
                     "BEGIN " +
-                    $"CREATE TABLE {UpgradeTableName}Error ( " +
-                    $"{UpgradeTableName}ErrorId INTEGER NOT NULL UNIQUE IDENTITY(1, 1), " +
+                    $"CREATE TABLE {UpgradeErrorTableName} ( " +
+                    $"{UpgradeErrorTableName}Id INTEGER NOT NULL UNIQUE IDENTITY(1, 1), " +
                     $"{UpgradeTableName}Id INTEGER NOT NULL, " +
                     "ErrorMessage NVARCHAR(MAX) NOT NULL DEFAULT GETUTCDATE(), " +
-                    $"PRIMARY KEY ({UpgradeTableName}ErrorId), " +
+                    $"PRIMARY KEY ({UpgradeErrorTableName}Id), " +
                     $"FOREIGN KEY ({UpgradeTableName}Id) REFERENCES {UpgradeTableName}({UpgradeTableName}Id) " +
                     ") END ";
                 QueryHandler.ExecuteNonQuery(query);

@@ -5,12 +5,14 @@ namespace tnORM
     class Program
     {
         private static bool CreateDatabase { get; set; }
-        private static string? Database { get; set; }
+        private static string? ReferenceDatabase { get; set; }
+        private static string? DatabaseName { get; set; }
         private static string? Schemas { get; set; }
         private static bool PerformClassGeneration { get; set; } = true;
         private static bool PerformScriptExecution { get; set; } = true;
         private static bool PerformCodeCompilation { get; set; } = true;
         private static string[]? Arguments { get; set; }
+        private static bool PauseOnEnd { get; set; } = false;
 
         static void Main(string[] args)
         {
@@ -32,14 +34,19 @@ namespace tnORM
                 if(!string.IsNullOrEmpty(arg))
                 {
 
-                    if(arg.StartsWith("database:", StringComparison.InvariantCultureIgnoreCase))
+                    if(arg.StartsWith("refdb:", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Database = arg[(arg.IndexOf(':') + 1)..];
+                        ReferenceDatabase = arg[(arg.IndexOf(':') + 1)..];
                         continue;
                     }
                     if(arg.StartsWith("schema:", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Schemas = arg[(arg.IndexOf(':') + 1)..];
+                        continue;
+                    }
+                    if(arg.StartsWith("dbname:", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        DatabaseName = arg[(arg.IndexOf(':') + 1)..];
                         continue;
                     }
                     if (arg.Equals("-noscript", StringComparison.InvariantCultureIgnoreCase))
@@ -57,6 +64,11 @@ namespace tnORM
                         PerformCodeCompilation = false;
                         continue;
                     }
+                    if(arg.Equals("-pause", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        PauseOnEnd = true;
+                        continue;
+                    }
                     throw new UnknownArgumentException(arg);
                 }
             }
@@ -65,19 +77,32 @@ namespace tnORM
 
         private static void BeginProcessing()
         {
+            if (string.IsNullOrEmpty(Schemas))
+            {
+                Console.WriteLine("No schemas specified. Defaulting to schema 'dbo'");
+                Schemas = "dbo";
+            }
+            if (string.IsNullOrEmpty(DatabaseName))
+            {
+                Console.WriteLine($"Database name not specified. Defaulting to {ReferenceDatabase}");
+                DatabaseName = ReferenceDatabase;
+            }
             if(PerformScriptExecution)
             {
-                DbScriptExecutor.Run(Database);
+                DbScriptExecutor.Run(ReferenceDatabase);
             }
             if (PerformClassGeneration)
             {
-                ORMCodeGenerator.Run(Database, Schemas);
+                ORMCodeGenerator.Run(ReferenceDatabase, DatabaseName, Schemas);
             }
             if (PerformCodeCompilation)
             {
-                ORMCodeCompiler.Run(Database, Schemas);
+                ORMCodeCompiler.Run(ReferenceDatabase, DatabaseName, Schemas);
             }
-            ConsoleLogger.LogLine("Program complete. Press Enter to exit");
+            if (PauseOnEnd)
+            {
+                ConsoleLogger.LogLine("Program complete. Press Enter to exit");
+            }
             Console.ReadLine();
         }
     }

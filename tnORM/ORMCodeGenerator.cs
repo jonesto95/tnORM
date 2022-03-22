@@ -12,6 +12,7 @@ namespace tnORM
         private static string CurrentTableAlias { get; set; }
         private static string CurrentColumnName { get; set; }
         private static string OutputDirectory { get; set; }
+        private static string NamespaceName { get; set; }
         private static int FieldPrecision { get; set; }
         private static byte FieldScale { get; set; }
         private static short? FieldMaxLength { get; set; }
@@ -19,9 +20,10 @@ namespace tnORM
         private static List<DataRow> CurrentTableSchema { get; set; } = new();
 
 
-        public static void Run(string database, string schemas)
+        public static void Run(string database, string namespaceName, string schemas)
         {
             CurrentDatabase = database;
+            NamespaceName = namespaceName;
             string[] schemaList = schemas.Split(',');
             foreach(string schema in schemaList)
             {
@@ -97,12 +99,18 @@ namespace tnORM
         // Step 4
         private static void BuildTableClasses()
         {
+            if (CurrentTableName.Equals(tnORMShared.UpgradeTableName, StringComparison.InvariantCultureIgnoreCase)
+                || CurrentTableName.Equals(tnORMShared.UpgradeErrorTableName, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return;
+            }
+
             ConsoleLogger.LogLine($"Generating class file for table {CurrentDatabase}.{CurrentSchema}.{CurrentTableName}");
             string modelClass =
                 "using tnORM.Shared;\r\n" +
                 "using tnORM.Querying;\r\n" +
                 "\r\n" +
-                $"namespace tnORM.Model.{CurrentDatabase}.{CurrentSchema}.Tables\r\n" +
+                $"namespace tnORM.Model.{NamespaceName}.{CurrentSchema}.Tables\r\n" +
                 "{\r\n" +
                 $"\tpublic partial class {CurrentTableName} : tnORMTableBase\r\n" +
                 "\t{\r\n" +
@@ -111,8 +119,8 @@ namespace tnORM
                 "\t\t\tget\r\n" +
                 "\t\t\t{\r\n" +
                 "\t\t\t\tif(!string.IsNullOrEmpty(databaseName)) { return databaseName; }\r\n" +
-                $"\t\t\t\tstring database = tnORMConfig.TryGetString(\"DatabaseOverrides:{CurrentDatabase}\");\r\n" +
-                $"\t\t\t\tdatabaseName = database ?? \"{CurrentDatabase}\";\r\n" +
+                $"\t\t\t\tstring database = tnORMConfig.TryGetString(\"DatabaseOverrides:{NamespaceName}\");\r\n" +
+                $"\t\t\t\tdatabaseName = database ?? \"{NamespaceName}\";\r\n" +
                 "\t\t\t\treturn databaseName;\r\n" +
                 "\t\t\t}\r\n" +
                 "\t\t}\r\n" +
@@ -209,10 +217,22 @@ namespace tnORM
                 "using tnORM.Shared;\r\n" +
                 "using tnORM.Querying;\r\n" +
                 "\r\n" +
-                $"namespace tnORM.Model.{CurrentDatabase}.{CurrentSchema}.Functions\r\n" +
+                $"namespace tnORM.Model.{NamespaceName}.{CurrentSchema}.Functions\r\n" +
                 "{\r\n" +
                 "\tpublic partial class Functions\r\n" +
-                "\t{\r\n";
+                "\t{\r\n" +
+                "\t\tpublic static string DatabaseName\r\n" +
+                "\t\t{\r\n" +
+                "\t\t\tget\r\n" +
+                "\t\t\t{\r\n" +
+                "\t\t\t\tif(!string.IsNullOrEmpty(databaseName)) { return databaseName; }\r\n" +
+                $"\t\t\t\tstring database = tnORMConfig.TryGetString(\"DatabaseOverrides:{NamespaceName}\");\r\n" +
+                $"\t\t\t\tdatabaseName = database ?? \"{NamespaceName}\";\r\n" +
+                "\t\t\t\treturn databaseName;\r\n" +
+                "\t\t\t}\r\n" +
+                "\t\t}\r\n" +
+                "\t\tprivate static string databaseName;\r\n" +
+                "\r\n";
             int i = 0;
             List<DataRow> parameters = new();
             DataRow currentRow;
@@ -272,7 +292,7 @@ namespace tnORM
                 "using tnORM.Shared;\r\n" +
                 "using tnORM.Querying;\r\n" +
                 "\r\n" +
-                $"namespace tnORM.Model.{CurrentDatabase}.{CurrentSchema}.StoredProcedures\r\n" +
+                $"namespace tnORM.Model.{NamespaceName}.{CurrentSchema}.StoredProcedures\r\n" +
                 "{\r\n" +
                 "\tpublic partial class StoredProcedures\r\n" +
                 "\t{\r\n";
@@ -341,7 +361,7 @@ namespace tnORM
                 $"\t\tpublic static DataTable {functionName}({cSharpParameterList})\r\n" +
                 "\t\t{\r\n" +
                 "\t\t\tDataTable result;\r\n" +
-                $"\t\t\tstring sqlText = $\"SELECT * FROM {functionName}({sqlParameterList})\";\r\n" +
+                $"\t\t\tstring sqlText = $\"USE {{DatabaseName}} SELECT [{CurrentSchema}].[{functionName}]({sqlParameterList})\";\r\n" +
                 "\t\t\tresult = tnORMQueryInterface.ExecuteQueryText(sqlText);\r\n" +
                 "\t\t\treturn result;\r\n" +
                 "\t\t}\r\n" +

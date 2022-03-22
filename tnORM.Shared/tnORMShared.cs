@@ -5,6 +5,8 @@ namespace tnORM.Shared
     public static class tnORMShared
     {
         public const string UpgradeTableName = "tnORMUpgradeScriptRun";
+
+        public const string UpgradeErrorTableName = UpgradeTableName + "Error";
         
         private static readonly DateTime Epoch = Convert.ToDateTime("1/1/1900");
 

@@ -5,8 +5,11 @@ namespace tnORM
 {
     public static class ORMCodeCompiler
     {
-        public static void Run(string database, string schemas)
+        public static string NamespaceName { get; set; }
+
+        public static void Run(string database, string namespaceName, string schemas)
         {
+            NamespaceName = namespaceName;
             string[] schemaList = schemas.Split(',');
             foreach(string schema in schemaList)
             {
@@ -37,7 +40,7 @@ namespace tnORM
                         string[] copyDirectories = tnORMConfig.TryGetConfigurationArray("DllCopyDirectories");
                         if(copyDirectories != null)
                         {
-                            string fileName = $"tnORM.Model.{schema}.dll";
+                            string fileName = $"tnORM.Model.{NamespaceName}.{schema}.dll";
                             string outputDll = outputDirectory + $"/bin/Debug/net6.0/{fileName}";
                             foreach(string directory in copyDirectories)
                             {
@@ -80,7 +83,7 @@ namespace tnORM
                 "    </Reference>\r\n" +
                 "  </ItemGroup>\r\n" +
                 "</Project>";
-            string fileName = $"tnORM.Model.{schema}.csproj";
+            string fileName = $"tnORM.Model.{NamespaceName}.{schema}.csproj";
             outputDirectory += $"/{fileName}";
             File.WriteAllText(outputDirectory, fileContent);
         }
