@@ -102,8 +102,8 @@ namespace tnORM
             if (PauseOnEnd)
             {
                 ConsoleLogger.LogLine("Program complete. Press Enter to exit");
+                Console.ReadLine();
             }
-            Console.ReadLine();
         }
     }
 
