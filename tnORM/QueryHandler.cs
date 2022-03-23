@@ -7,15 +7,18 @@ namespace tnORM
 {
     public static class QueryHandler
     {
-        private static string? connectionString;
+        public static string? ConnectionString;
         private static SqlConnection SqlConnection
         {
             get
             {
                 if(sqlConnection == null)
                 {
-                    connectionString = tnORMConfig.GetString("ConnectionString");
-                    sqlConnection = new(connectionString);
+                    if (string.IsNullOrEmpty(ConnectionString))
+                    {
+                        ConnectionString = tnORMConfig.GetString("ConnectionString");
+                    }
+                    sqlConnection = new(ConnectionString);
                     sqlConnection.Open();
                 }
                 return sqlConnection;

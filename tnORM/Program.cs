@@ -7,6 +7,7 @@ namespace tnORM
         private static bool CreateDatabase { get; set; }
         private static string? ReferenceDatabase { get; set; }
         private static string? DatabaseName { get; set; }
+        private static string? ConnectionString { get; set; }
         private static string? Schemas { get; set; }
         private static bool PerformClassGeneration { get; set; } = true;
         private static bool PerformScriptExecution { get; set; } = true;
@@ -47,6 +48,12 @@ namespace tnORM
                     if(arg.StartsWith("dbname:", StringComparison.InvariantCultureIgnoreCase))
                     {
                         DatabaseName = arg[(arg.IndexOf(':') + 1)..];
+                        continue;
+                    }
+                    if(arg.StartsWith("connstr:", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        ConnectionString = arg[(arg.IndexOf(':') + 1)..];
+                        QueryHandler.ConnectionString = ConnectionString;
                         continue;
                     }
                     if (arg.Equals("-noscript", StringComparison.InvariantCultureIgnoreCase))
