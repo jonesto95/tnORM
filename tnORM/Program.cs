@@ -56,6 +56,12 @@ namespace tnORM
                         QueryHandler.ConnectionString = ConnectionString;
                         continue;
                     }
+                    if(arg.StartsWith("config:", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        string configFile = arg[(arg.IndexOf(':') + 1)..];
+                        configFile = Path.GetFullPath(configFile);
+                        tnORMConfig.LoadConfigurationFromJson(configFile);
+                    }
                     if (arg.Equals("-noscript", StringComparison.InvariantCultureIgnoreCase))
                     {
                         PerformScriptExecution = false;
