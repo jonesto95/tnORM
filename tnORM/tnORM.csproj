@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\tnORM.Querying\tnORM.Querying.csproj" />
     <ProjectReference Include="..\tnORM.Shared\tnORM.Shared.csproj" />
   </ItemGroup>
 
@@ -24,5 +25,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+  
 </Project>

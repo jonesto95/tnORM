@@ -76,10 +76,10 @@ namespace tnORM
                 "  </PropertyGroup>\r\n" +
                 "  <ItemGroup>\r\n" +
                 "    <Reference Include=\"tnORM.Shared\">\r\n" +
-                "        <HintPath>..\\SharedDlls\\tnORM.Shared.dll</HintPath>\r\n" +
+                "        <HintPath>..\\..\\tnORM.Shared.dll</HintPath>\r\n" +
                 "    </Reference>\r\n" +
                 "    <Reference Include=\"tnORM.Querying\">\r\n" +
-                "        <HintPath>..\\SharedDlls\\tnORM.Querying.dll</HintPath>\r\n" +
+                "        <HintPath>..\\..\\tnORM.Querying.dll</HintPath>\r\n" +
                 "    </Reference>\r\n" +
                 "  </ItemGroup>\r\n" +
                 "</Project>";
