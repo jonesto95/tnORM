@@ -61,6 +61,7 @@ namespace tnORM
                         string configFile = arg[(arg.IndexOf(':') + 1)..];
                         configFile = Path.GetFullPath(configFile);
                         tnORMConfig.LoadConfigurationFromJson(configFile);
+                        continue;
                     }
                     if (arg.Equals("-noscript", StringComparison.InvariantCultureIgnoreCase))
                     {
