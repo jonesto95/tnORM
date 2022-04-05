@@ -134,7 +134,12 @@ namespace tnORM
                 "\r\n" +
                 $"\t\tpublic override {CurrentTableName}Fields Fields => new();\r\n" +
                 "\r\n" +
-                $"\t\tpublic override {CurrentTableName}Data Data => new();\r\n" +
+                $"\t\tpublic new {CurrentTableName}Data Data {{ get; private set; }} = new();\r\n" +
+                "\r\n" +
+                "\t\tpublic override void SetDataField(string field, object value)\r\n" +
+                "\t\t{\r\n" +
+                "\t\t\tData = Data.SetProperty(field, value);\r\n" +
+                "\t\t}\r\n" +
                 "\t}\r\n";
 
             string tableFieldClass = 

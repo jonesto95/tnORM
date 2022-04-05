@@ -1,5 +1,6 @@
 {
+  "ConnectionString": "data source=localhost;initial catalog=TND2022;trusted_connection=true",
   "DatabaseOverrides": {
-    "TestDb":  "TTT"
+    "TestDb": "TTT"
   }
 }

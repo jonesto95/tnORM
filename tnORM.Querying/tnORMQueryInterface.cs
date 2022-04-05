@@ -99,7 +99,7 @@ namespace tnORM.Querying
             foreach (string field in fields)
             {
                 object cellValue = row.TryGetColumnValue<object>(field);
-                entity.Data.SetProperty(field, cellValue);
+                entity.SetDataField(field, cellValue);
             }
             return entity;
         }
@@ -112,13 +112,7 @@ namespace tnORM.Querying
             string[] fields = tableInstance.Fields.GetFieldNames();
             for (int i = 0; i < result.Length; i++)
             {
-                T entity = Activator.CreateInstance<T>();
-                foreach (string field in fields)
-                {
-                    object cellValue = table.Rows[i].TryGetColumnValue<object>(field);
-                    entity.Data.SetProperty(field, cellValue);
-                }
-                result[i] = entity;
+                result[i] = ConvertToModel<T>(table.Rows[i]);
             }
             return result;
         }

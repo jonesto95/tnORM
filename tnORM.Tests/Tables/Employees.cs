@@ -47,7 +47,13 @@ namespace tnORM.Tests.Tables
 
         public override EmployeesFields Fields => new EmployeesFields();
 
-        public override EmployeesData Data => new EmployeesData();
+        public new EmployeesData Data { get; private set; } = new();
+
+
+        public override void SetDataField(string field, object value)
+        {
+            Data = Data.SetProperty(field, value);
+        }
     }
 }
 

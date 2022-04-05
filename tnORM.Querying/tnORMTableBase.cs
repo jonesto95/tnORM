@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using tnORM.Shared;
 
 namespace tnORM.Querying
 {
@@ -9,7 +10,8 @@ namespace tnORM.Querying
         public abstract string TableName { get; }
         public abstract string TableAlias { get; }
         public abstract tnORMTableFieldCollection Fields { get; }
-        public abstract tnORMTableDataCollection Data { get; }
+        public virtual tnORMTableDataCollection Data { get; private set; }
+
 
         public string FullyQualifiedTableName
         {
@@ -18,6 +20,8 @@ namespace tnORM.Querying
                 return $"{DatabaseName}.[{SchemaName}].[{TableName}]";
             }
         }
+
+        public abstract void SetDataField(string field, object value);
     }
 
 

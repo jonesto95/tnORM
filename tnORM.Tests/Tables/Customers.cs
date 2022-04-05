@@ -55,7 +55,12 @@ namespace tnORM.Tests.Tables
         public override CustomersFields Fields => new();
 
 
-        public override CustomersData Data => new();
+        public new CustomersData Data = new();
+
+        public override void SetDataField(string field, object value)
+        {
+            Data = Data.SetProperty(field, value);
+        }
     }
 }
 
