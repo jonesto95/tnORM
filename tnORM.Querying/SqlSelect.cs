@@ -749,7 +749,7 @@ namespace tnORM.Querying
             if (SelectTop.HasValue)
             {
                 result += $"TOP {SelectTop} ";
-                if(SelectTopPercentage)
+                if (SelectTopPercentage)
                 {
                     result += "PERCENT ";
                 }
@@ -767,7 +767,7 @@ namespace tnORM.Querying
                 result += "DISTINCT ";
             }
             result += SelectList[0];
-            for(int i = 1; i < SelectList.Count; i++)
+            for (int i = 1; i < SelectList.Count; i++)
             {
                 result += $", {SelectList[i]}";
             }
@@ -780,41 +780,41 @@ namespace tnORM.Querying
             }
 
             // Build JOINs
-            if(TableJoins.Count > 0)
+            if (TableJoins.Count > 0)
             {
-                foreach(var tableJoin in TableJoins)
+                foreach (var tableJoin in TableJoins)
                 {
                     result += $"{tableJoin} ";
                 }
             }
 
             // Build WHERE clause
-            if(WhereClause != null)
+            if (WhereClause != null)
             {
                 result += $"WHERE {WhereClause} ";
             }
 
             // Build GROUP BY
-            if(GroupByList.Count > 0)
+            if (GroupByList.Count > 0)
             {
                 result += $"GROUP BY {GroupByList[0]} ";
-                for(int i = 1; i < GroupByList.Count; i++)
+                for (int i = 1; i < GroupByList.Count; i++)
                 {
                     result += $", {GroupByList[i]}";
                 }
 
                 // Build HAVING
-                if(HavingClause != null)
+                if (HavingClause != null)
                 {
                     result += $"HAVING {HavingClause} ";
                 }
             }
 
             // Build ORDER BY
-            if(OrderByList.Count > 0)
+            if (OrderByList.Count > 0)
             {
                 result += $"ORDER BY {OrderByList[0]}";
-                for(int i = 1; i < OrderByList.Count; i++)
+                for (int i = 1; i < OrderByList.Count; i++)
                 {
                     result += $", {OrderByList[i]}";
                 }
@@ -831,10 +831,10 @@ namespace tnORM.Querying
             }
 
             // Query Chaining
-            if(ChainedQueries.Count > 0)
+            if (ChainedQueries.Count > 0)
             {
                 string chainString = string.Empty;
-                foreach(var link in ChainedQueries)
+                foreach (var link in ChainedQueries)
                 {
                     chainString = link.ChainType.ToString().Replace("_", " ");
                     result += $"{chainString} ({link.Query.Nolock(UseNolock)}";

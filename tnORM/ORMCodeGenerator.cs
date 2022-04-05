@@ -174,7 +174,7 @@ namespace tnORM
                     tableFieldClass += "\t\t[Identity]\r\n";
                 }
                 tableFieldClass += "\t\t[DatabaseColumn]\r\n" +
-                    $"\t\tpublic static SqlField {CurrentColumnName}Field {{ get; }} = new(\"{CurrentTableAlias}\", \"{CurrentColumnName}\", \"{CurrentColumnName}\");\r\n" +
+                    $"\t\tpublic static SqlField {CurrentColumnName} {{ get; }} = new(\"{CurrentTableAlias}\", \"{CurrentColumnName}\", \"{CurrentColumnName}\");\r\n" +
                     "\r\n";
 
                 // Build Table Data class

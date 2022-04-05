@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using System.Reflection;
 using tnORM.Shared;
 
 namespace tnORM.Querying
@@ -59,6 +58,52 @@ namespace tnORM.Querying
 
 
         #region Query result conversion methods
+
+        public static T FirstOrDefault<T>(this SqlSelect select) where T: tnORMTableBase
+        {
+            var dataTable = ExecuteQueryText(select);
+            if(dataTable.Rows.Count == 0)
+            {
+                return default;
+            }
+            return ConvertToModel<T>(dataTable.Rows[0]);
+        }
+
+
+        public static T SingleOrDefault<T>(this SqlSelect select) where T : tnORMTableBase
+        {
+            var dataTable = ExecuteQueryText(select);
+            if (dataTable.Rows.Count == 0)
+            {
+                return default;
+            }
+            if(dataTable.Rows.Count > 1)
+            {
+                throw new TooManyResultsException(dataTable.Rows.Count);
+            }
+            return ConvertToModel<T>(dataTable.Rows[0]);
+        }
+
+
+        public static T[] ToModelArray<T>(this SqlSelect select) where T : tnORMTableBase
+        {
+            var dataTable = ExecuteQueryText(select);
+            return ConvertToModelArray<T>(dataTable);
+        }
+
+
+        public static T ConvertToModel<T>(this DataRow row) where T : tnORMTableBase
+        {
+            T entity = Activator.CreateInstance<T>();
+            string[] fields = entity.Fields.GetFieldNames();
+            foreach (string field in fields)
+            {
+                object cellValue = row.TryGetColumnValue<object>(field);
+                entity.Data.SetProperty(field, cellValue);
+            }
+            return entity;
+        }
+
 
         public static T[] ConvertToModelArray<T>(this DataTable table) where T : tnORMTableBase
         {
@@ -213,6 +258,14 @@ namespace tnORM.Querying
     {
         public PrimaryKeyNotDefinedException(string tableName)
             : base($"Table {tableName} does not have a primary key defined")
+        { }
+    }
+
+
+    public class TooManyResultsException : Exception
+    {
+        public TooManyResultsException(int resultCount)
+            : base($"{resultCount} results were found when at most one was expected")
         { }
     }
 }
