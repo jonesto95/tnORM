@@ -144,6 +144,13 @@ namespace tnORM.Querying
         }
 
 
+        public static void Insert<T>(this T entity) where T : tnORMTableBase
+        {
+            string insertSql = entity.InsertString();
+            ExecuteNonQueryText(insertSql);
+        }
+
+
         public static string UpdateString<T>(this T entity) where T : tnORMTableBase
         {
             T tableInstance = Activator.CreateInstance<T>();
@@ -169,6 +176,13 @@ namespace tnORM.Querying
         }
 
 
+        public static void Update<T>(this T entity) where T : tnORMTableBase
+        {
+            string updateSql = entity.UpdateString();
+            ExecuteNonQueryText(updateSql);
+        }
+
+
         public static string DeleteString<T>(this T entity) where T : tnORMTableBase
         {
             T tableInstance = Activator.CreateInstance<T>();
@@ -182,6 +196,13 @@ namespace tnORM.Querying
                 deleteString += $"AND {primaryKeys[i].Name} = {primaryKeyValue.ToSqlString()} ";
             }
             return deleteString;
+        }
+
+
+        public static void Delete<T>(this T entity) where T : tnORMTableBase
+        {
+            string deleteSql = entity.DeleteString();
+            ExecuteNonQueryText(deleteSql);
         }
 
         #endregion
