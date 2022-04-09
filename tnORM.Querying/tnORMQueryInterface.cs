@@ -136,7 +136,7 @@ namespace tnORM.Querying
             object property = null;
             foreach(string field in fields)
             {
-                property = entity.GetProperty<object>(field);
+                property = entity.Data.GetProperty<object>(field);
                 result += property.ToSqlString() + ", ";
             }
             result = result[..^2] + ")";
@@ -159,17 +159,17 @@ namespace tnORM.Querying
                 $"UPDATE {tableInstance.FullyQualifiedTableName} SET ";
             foreach(string field in fields)
             {
-                object value = entity.GetProperty<object>(field);
+                object value = entity.Data.GetProperty<object>(field);
                 updateString += $"{field} = {value.ToSqlString()},";
             }
             updateString = updateString[..^1];
 
             var primaryKeys = entity.Fields.GetPrimaryKeyFields();
-            object primaryKeyValue = entity.GetProperty<object>(primaryKeys[0].Name);
+            object primaryKeyValue = entity.Data.GetProperty<object>(primaryKeys[0].Name);
             updateString += $"WHERE {primaryKeys[0].Name} = {primaryKeyValue.ToSqlString()} ";
             for(int i = 1; i < primaryKeys.Length; i++)
             {
-                primaryKeyValue = entity.GetProperty<object>(primaryKeys[i].Name);
+                primaryKeyValue = entity.Data.GetProperty<object>(primaryKeys[i].Name);
                 updateString += $"AND {primaryKeys[i].Name} = {primaryKeyValue.ToSqlString()} ";
             }
             return updateString;
@@ -188,11 +188,11 @@ namespace tnORM.Querying
             T tableInstance = Activator.CreateInstance<T>();
             string deleteString = $"DELETE FROM {tableInstance.FullyQualifiedTableName} ";
             var primaryKeys = entity.Fields.GetPrimaryKeyFields();
-            object primaryKeyValue = entity.GetProperty<object>(primaryKeys[0].Name);
+            object primaryKeyValue = entity.Data.GetProperty<object>(primaryKeys[0].Name);
             deleteString += $"WHERE {primaryKeys[0].Name} = {primaryKeyValue.ToSqlString()} ";
             for (int i = 1; i < primaryKeys.Length; i++)
             {
-                primaryKeyValue = entity.GetProperty<object>(primaryKeys[i].Name);
+                primaryKeyValue = entity.Data.GetProperty<object>(primaryKeys[i].Name);
                 deleteString += $"AND {primaryKeys[i].Name} = {primaryKeyValue.ToSqlString()} ";
             }
             return deleteString;
