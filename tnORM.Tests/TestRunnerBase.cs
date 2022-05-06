@@ -73,6 +73,15 @@ namespace tnORM.Tests
         }
 
 
+        public void AssertNotNull(object value)
+        {
+            if(value == null)
+            {
+
+            }
+        }
+
+
         public void LogRunnerStart()
         {
             LogLine();

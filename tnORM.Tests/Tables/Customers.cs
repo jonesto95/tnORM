@@ -54,12 +54,16 @@ namespace tnORM.Tests.Tables
 
         public override CustomersFields Fields => new();
 
-
-        public new CustomersData Data = new();
+        public CustomersData Data { get; protected set; } = new();
 
         public override void SetDataField(string field, object value)
         {
             Data = Data.SetProperty(field, value);
+        }
+
+        public override T GetDataField<T>(string field)
+        {
+            return Data.GetProperty<T>(field);
         }
     }
 }

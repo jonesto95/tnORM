@@ -134,11 +134,16 @@ namespace tnORM
                 "\r\n" +
                 $"\t\tpublic override {CurrentTableName}Fields Fields => new();\r\n" +
                 "\r\n" +
-                $"\t\tpublic new {CurrentTableName}Data Data {{ get; private set; }} = new();\r\n" +
+                $"\t\tpublic {CurrentTableName}Data Data {{ get; protected set; }} = new();\r\n" +
                 "\r\n" +
                 "\t\tpublic override void SetDataField(string field, object value)\r\n" +
                 "\t\t{\r\n" +
-                "\t\t\tData = Data.SetProperty(field, value);\r\n" +
+                "\t\t\tData.SetProperty(field, value);\r\n" +
+                "\t\t}\r\n" +
+                "\r\n" +
+                "\t\tpublic override T GetDataField<T>(string field)\r\n" +
+                "\t\t{\r\n" +
+                "\t\t\treturn Data.GetProperty<T>(field);\r\n" +
                 "\t\t}\r\n" +
                 "\t}\r\n";
 
@@ -190,7 +195,7 @@ namespace tnORM
                 string cSharpDataType = GetCSharpDataType(dataType.Value, isNullable);
                 tableDataClass += $"\t\tpublic {cSharpDataType} {CurrentColumnName} {{ get; set; }}\r\n\r\n";
             }
-            tableFieldClass += "\t}";
+            tableFieldClass += "\t}\r\n";
             dataConstructor += "\t\t}\r\n\t}\r\n}";
 
             string fileText = $"{modelClass}\r\n{tableFieldClass}\r\n{tableDataClass}\r\n{dataConstructor}";

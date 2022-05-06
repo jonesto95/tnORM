@@ -10,8 +10,6 @@ namespace tnORM.Querying
         public abstract string TableName { get; }
         public abstract string TableAlias { get; }
         public abstract tnORMTableFieldCollection Fields { get; }
-        public virtual tnORMTableDataCollection Data { get; private set; }
-
 
         public string FullyQualifiedTableName
         {
@@ -22,6 +20,8 @@ namespace tnORM.Querying
         }
 
         public abstract void SetDataField(string field, object value);
+
+        public abstract T GetDataField<T>(string field);
     }
 
 

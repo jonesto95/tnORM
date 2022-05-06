@@ -10,6 +10,7 @@ TestRunnerBase[] runners =
     , new SqlSelectTestRunner()
     , new SqlUpdateTestRunner()
     , new SqlDeleteTestRunner()
+    , new SqlTableRunner()
 };
 
 
@@ -47,5 +48,13 @@ public class UnequalValuesException : Exception
 {
     public UnequalValuesException(object resultValue, object expectedValue)
         : base($"Resulting value \"{resultValue}\" is not equal to expected value \"{expectedValue}\"")
+    { }
+}
+
+
+public class NullValueException : Exception
+{
+    public NullValueException()
+        : base("Value is null when a value was expected")
     { }
 }
