@@ -10,7 +10,6 @@ TestRunnerBase[] runners =
     , new SqlSelectTestRunner()
     , new SqlUpdateTestRunner()
     , new SqlDeleteTestRunner()
-    , new SqlTableRunner()
 };
 
 
