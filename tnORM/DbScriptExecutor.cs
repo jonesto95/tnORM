@@ -213,6 +213,10 @@ namespace tnORM
                             result += savedPrimaryKeys[buffer];
                         }
                     }
+                    else
+                    {
+                        result += buffer;
+                    }
                 }
                 else
                 {
