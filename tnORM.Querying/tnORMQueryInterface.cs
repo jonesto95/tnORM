@@ -92,6 +92,18 @@ namespace tnORM.Querying
         }
 
 
+        public static T[] ToPrimitiveArray<T>(this SqlSelect select)
+        {
+            var dataTable = ExecuteQueryText(select);
+            T[] result = new T[dataTable.Rows.Count];
+            for(int i = 0; i < result.Length; i++)
+            {
+                result[i] = (T)(dataTable.Rows[i].ItemArray[0]);
+            }
+            return result;
+        }
+
+
         public static T ConvertToModel<T>(this DataRow row) where T : tnORMTableBase
         {
             T entity = Activator.CreateInstance<T>();
