@@ -59,6 +59,14 @@ namespace tnORM.Querying
 
         #region Query result conversion methods
 
+        public static int Count(this SqlSelect select)
+        {
+            select.ResetSelect();
+            select.Select(SqlAggregate.Count());
+            return select.ToScalarValueOrDefault<int>();
+        }
+
+
         public static T FirstOrDefault<T>(this SqlSelect select) where T: tnORMTableBase
         {
             var dataTable = ExecuteQueryText(select);
