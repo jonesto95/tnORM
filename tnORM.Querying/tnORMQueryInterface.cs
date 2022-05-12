@@ -92,6 +92,17 @@ namespace tnORM.Querying
         }
 
 
+        public static T ToScalarValueOrDefault<T>(this SqlSelect select)
+        {
+            var dataTable = ExecuteQueryText(select);
+            if (dataTable.Rows.Count == 0)
+            {
+                return default;
+            }
+            return (T)dataTable.Rows[0].ItemArray[0];
+        }
+
+
         public static T[] ToPrimitiveArray<T>(this SqlSelect select)
         {
             var dataTable = ExecuteQueryText(select);
