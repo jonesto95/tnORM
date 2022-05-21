@@ -531,6 +531,13 @@ namespace tnORM.Querying
         }
 
 
+        public SqlSelect ResetOrderBy()
+        {
+            OrderByList.Clear();
+            return this;
+        }
+
+
         private SqlSelect AddOrderBy(string name, bool descending)
         {
             if (descending)

@@ -63,6 +63,7 @@ namespace tnORM.Querying
         {
             select.ResetSelect();
             select.Select(SqlAggregate.Count());
+            select.ResetOrderBy();
             return select.ToScalarValueOrDefault<int>();
         }
 
