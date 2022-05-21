@@ -154,22 +154,37 @@ namespace tnORM.Querying
 
         public static string InsertString<T>(this T entity) where T : tnORMTableBase
         {
-            bool hasIdentityColumn = entity.Fields.HasIdentityColumn();
-            string[] fields = entity.Fields.GetFieldNames(!hasIdentityColumn);
+            return InsertString(entity, false);
+        }
+
+
+        public static string InsertString<T>(this T entity, bool identityInsert) where T : tnORMTableBase
+        {
+            string result = string.Empty;
             string table = $"{entity.DatabaseName}.[{entity.SchemaName}].[{entity.TableName}]";
-            string result = $"INSERT INTO {table} (";
-            foreach(string field in fields)
+            bool hasIdentityColumn = entity.Fields.HasIdentityColumn();
+            if (hasIdentityColumn && identityInsert)
+            {
+                result += $"SET IDENTITY_INSERT {table} ON ";
+            }
+            string[] fields = entity.Fields.GetFieldNames(true, identityInsert);
+            result += $"INSERT INTO {table} (";
+            foreach (string field in fields)
             {
                 result += $"{field}, ";
             }
             result = result[..^2] + ") VALUES (";
             object property = null;
-            foreach(string field in fields)
+            foreach (string field in fields)
             {
                 property = entity.GetDataField<object>(field);
                 result += property.ToSqlString() + ", ";
             }
             result = result[..^2] + ")";
+            if (hasIdentityColumn && identityInsert)
+            {
+                result += $" SET IDENTITY_INSERT {table} OFF ";
+            }
             return result;
         }
 
@@ -184,7 +199,7 @@ namespace tnORM.Querying
         public static string UpdateString<T>(this T entity) where T : tnORMTableBase
         {
             T tableInstance = Activator.CreateInstance<T>();
-            string[] fields = entity.Fields.GetFieldNames(false);
+            string[] fields = entity.Fields.GetFieldNames(false, false);
             string updateString =
                 $"UPDATE {tableInstance.FullyQualifiedTableName} SET ";
             foreach(string field in fields)

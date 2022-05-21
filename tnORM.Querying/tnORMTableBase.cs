@@ -49,18 +49,19 @@ namespace tnORM.Querying
 
         public string[] GetFieldNames()
         {
-            return GetFieldNames(true);
+            return GetFieldNames(true, false);
         }
 
 
-        public string[] GetFieldNames(bool includePrimaryKeyFields)
+        public string[] GetFieldNames(bool includePrimaryKeyFields, bool includeIdentityFields)
         {
             List<string> result = new();
             var properties = GetType().GetProperties();
             foreach (var property in properties)
             {
                 if (Attribute.IsDefined(property, typeof(DatabaseColumn))
-                    && (includePrimaryKeyFields || !Attribute.IsDefined(property, typeof(PrimaryKey))))
+                    && (includePrimaryKeyFields || !Attribute.IsDefined(property, typeof(PrimaryKey)))
+                    && (includeIdentityFields || !Attribute.IsDefined(property, typeof(Identity))))
                 {
                     result.Add(property.Name);
                 }

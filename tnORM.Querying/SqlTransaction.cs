@@ -4,9 +4,17 @@
     {
         public Exception Exception { get; set; }
 
+        public bool IdentityInsert { get; set; } = false;
+
         private readonly List<string> Statements = new();
 
         public SqlTransaction() { }
+
+
+        public SqlTransaction(bool identityInsert)
+        {
+            IdentityInsert = identityInsert;
+        }
 
 
         public SqlTransaction Select(SqlSelect select)
@@ -17,7 +25,7 @@
 
         public SqlTransaction Insert<T>(T entity) where T : tnORMTableBase
         {
-            string insertString = entity.InsertString();
+            string insertString = entity.InsertString(IdentityInsert);
             AddQueryText(insertString);
             return this;
         }
