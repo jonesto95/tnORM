@@ -127,7 +127,7 @@ namespace tnORM.Querying
         public static T ConvertToModel<T>(this DataRow row) where T : tnORMTableBase
         {
             T entity = Activator.CreateInstance<T>();
-            string[] fields = entity.Fields.GetFieldNames();
+            string[] fields = entity.Fields.GetFieldNames(true, true);
             foreach (string field in fields)
             {
                 object cellValue = row.TryGetColumnValue<object>(field);
