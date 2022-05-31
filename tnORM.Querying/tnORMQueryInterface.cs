@@ -6,39 +6,30 @@ namespace tnORM.Querying
 {
     public static class tnORMQueryInterface
     {
-        private static SqlConnection SqlConnection
-        {
-            get
-            {
-                if(sqlConnection == null)
-                {
-                    string connectionString = tnORMConfig.GetString("ConnectionString");
-                    sqlConnection = new(connectionString);
-                    sqlConnection.Open();
-                }
-                return sqlConnection;
-            }
-        }
-        private static SqlConnection sqlConnection;
+        private static string ConnectionString = tnORMConfig.GetString(nameof(ConnectionString));
 
 
         #region Query methods
 
         public static DataTable ExecuteQueryText(string query)
         {
-            SqlCommand sqlCommand = new(query, SqlConnection);
+            SqlConnection sqlConnection = new(ConnectionString);
+            sqlConnection.Open();
+            SqlCommand sqlCommand = new(query, sqlConnection);
             DataTable result = new();
             using (SqlDataAdapter adapter = new(sqlCommand))
             {
                 adapter.Fill(result);
             }
+            sqlConnection.Close();
             return result;
         }
 
 
         public static DataSet ExecuteQueryTextIntoDataSet(string query)
         {
-            var sqlCommand = new SqlCommand(query, SqlConnection);
+            SqlConnection sqlConnection = new(ConnectionString);
+            var sqlCommand = new SqlCommand(query, sqlConnection);
             var result = new DataSet();
             using (var sqlDataAdapter = new SqlDataAdapter(sqlCommand))
             {
@@ -50,7 +41,8 @@ namespace tnORM.Querying
 
         public static int ExecuteNonQueryText(string sqlText)
         {
-            SqlCommand sqlCommand = new(sqlText, SqlConnection);
+            SqlConnection sqlConnection = new(ConnectionString);
+            SqlCommand sqlCommand = new(sqlText, sqlConnection);
             return sqlCommand.ExecuteNonQuery();
         }
 
