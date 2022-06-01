@@ -29,12 +29,14 @@ namespace tnORM.Querying
         public static DataSet ExecuteQueryTextIntoDataSet(string query)
         {
             SqlConnection sqlConnection = new(ConnectionString);
+            sqlConnection.Open();
             var sqlCommand = new SqlCommand(query, sqlConnection);
             var result = new DataSet();
             using (var sqlDataAdapter = new SqlDataAdapter(sqlCommand))
             {
                 sqlDataAdapter.Fill(result);
             }
+            sqlConnection.Close();
             return result;
         }
 
@@ -42,8 +44,11 @@ namespace tnORM.Querying
         public static int ExecuteNonQueryText(string sqlText)
         {
             SqlConnection sqlConnection = new(ConnectionString);
+            sqlConnection.Open();
             SqlCommand sqlCommand = new(sqlText, sqlConnection);
-            return sqlCommand.ExecuteNonQuery();
+            int result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+            return result;
         }
 
         #endregion
